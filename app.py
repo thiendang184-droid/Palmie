@@ -1,6 +1,8 @@
 import streamlit as st
 from PIL import Image
 import time
+import os
+import gdown
 from utils.predictor import run_inference
 from utils.interpreter import interpret_results
 
@@ -57,6 +59,34 @@ st.markdown("""
 st.markdown('<h1 class="main-title">Bói Chỉ Tay AI</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">Khám phá bí ẩn đường chỉ tay bằng trí tuệ nhân tạo</p>', unsafe_allow_html=True)
 st.divider()
+
+# ─── Hàm Tải Model Tự Động ───────────────────────────────────────────────────
+@st.cache_resource
+def download_models():
+    # Tạo thư mục model nếu chưa có trên server
+    os.makedirs('model', exist_ok=True)
+    
+    model1_path = 'model/best_model.pth'
+    model2_path = 'model/best_model2.pth'
+    
+    
+    id_model1 = 'https://drive.google.com/file/d/1Zjcwts4QwJnd7myJLXsPB7LK28XUaEqA/view?usp=drive_link'
+    id_model2 = 'https://drive.google.com/file/d/1ANdhjIM4O4QPlMy0WJrtw4j50BwP4Xb8/view?usp=drive_link'
+
+    # Tải Model 1
+    if not os.path.exists(model1_path):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 1)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
+            gdown.download(f'https://drive.google.com/uc?id={id_model1}', model1_path, quiet=False)
+
+    # Tải Model 2
+    if not os.path.exists(model2_path):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 2)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
+            gdown.download(f'https://drive.google.com/uc?id={id_model2}', model2_path, quiet=False)
+            
+    return True
+
+# Kích hoạt tải model ngay khi app load xong header
+_ = download_models()
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
