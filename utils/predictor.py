@@ -18,7 +18,7 @@ CLASS_COLORS = {
 }
 
 
-def load_model(model_path: str = "model/best_model2.pth"):
+def load_model(model_path: str = "model/best_model3.pth"):
     global _model, _classes, _device
     if _model is None:
         _device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")

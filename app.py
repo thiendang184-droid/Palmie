@@ -68,10 +68,11 @@ def download_models():
     
     model1_path = 'model/best_model.pth'
     model2_path = 'model/best_model2.pth'
-    
+    model3_path = 'model/best_model3.pth'
     
     id_model1 = 'https://drive.google.com/file/d/1Zjcwts4QwJnd7myJLXsPB7LK28XUaEqA/view?usp=drive_link'
     id_model2 = 'https://drive.google.com/file/d/1ANdhjIM4O4QPlMy0WJrtw4j50BwP4Xb8/view?usp=drive_link'
+    id_model3 = 'https://drive.google.com/file/d/1jbqF1hY_EyjwZHLF_M4tcVviahRCYdUT/view?usp=drive_link'
 
     # Tải Model 1
     if not os.path.exists(model1_path):
@@ -82,7 +83,12 @@ def download_models():
     if not os.path.exists(model2_path):
         with st.spinner("Đang khởi tạo Hệ thống AI (Model 2)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
             gdown.download(f'https://drive.google.com/uc?id={id_model2}', model2_path, quiet=False)
-            
+
+    # Tải Model 3
+    if not os.path.exists(model3_path):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 3)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
+            gdown.download(f'https://drive.google.com/uc?id={id_model3}', model3_path, quiet=False)
+
     return True
 
 # Kích hoạt tải model ngay khi app load xong header
