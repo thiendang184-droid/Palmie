@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1
 from PIL import Image
 import time
 import os
@@ -35,30 +36,6 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* ── Starfield (CSS only) ── */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-            radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
-            radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
-            radial-gradient(1.5px 1.5px at 40% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
-            radial-gradient(1px 1px at 55% 70%, rgba(255,255,255,0.35) 0%, transparent 100%),
-            radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
-            radial-gradient(1.5px 1.5px at 80% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
-            radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
-            radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
-            radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
-            radial-gradient(1.5px 1.5px at 35% 60%, rgba(200,150,255,0.5) 0%, transparent 100%),
-            radial-gradient(1px 1px at 85% 75%, rgba(200,150,255,0.4) 0%, transparent 100%),
-            radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.3) 0%, transparent 100%),
-            radial-gradient(1px 1px at 95% 40%, rgba(255,255,255,0.35) 0%, transparent 100%),
-            radial-gradient(1.5px 1.5px at 47% 33%, rgba(255,255,255,0.5) 0%, transparent 100%),
-            radial-gradient(1px 1px at 73% 88%, rgba(200,150,255,0.3) 0%, transparent 100%);
-        pointer-events: none;
-        z-index: 0;
-    }
 
     /* ── Main Title ── */
     .main-title-wrap {
@@ -142,10 +119,20 @@ st.markdown("""
         border-right: 1px solid rgba(120,80,200,0.2) !important;
     }
     [data-testid="stSidebar"] .stMarkdown h2,
+    [data-testid="stSidebar"] .stMarkdown h3,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span {
+        font-family: 'Be Vietnam Pro', sans-serif !important;
+    }
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] .stMarkdown h2,
     [data-testid="stSidebar"] .stMarkdown h3 {
-        font-family: 'Cinzel', serif !important;
         color: #c084fc !important;
-        letter-spacing: 0.06em;
     }
 
     /* ── Cards ── */
@@ -432,6 +419,154 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
+# ─── Animated Starfield ──────────────────────────────────────────────────────
+st.components.v1.html("""
+<canvas id="starCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('starCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let W, H, stars = [], shootingStars = [], ripples = [];
+  const N_STARS = 180;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  // ── Init stars ──
+  for (let i = 0; i < N_STARS; i++) {
+    stars.push({
+      x: rand(0, 1), y: rand(0, 1),
+      r: rand(0.4, 1.8),
+      alpha: rand(0.2, 0.9),
+      speed: rand(0.0003, 0.0012),
+      phase: rand(0, Math.PI * 2),
+      color: Math.random() > 0.85 ? '#c4b5fd' : '#ffffff',
+    });
+  }
+
+  // ── Shooting star ──
+  function spawnShoot() {
+    shootingStars.push({
+      x: rand(0.1, 0.9), y: rand(0, 0.4),
+      len: rand(0.06, 0.14),
+      speed: rand(0.004, 0.009),
+      alpha: 1,
+      angle: rand(25, 45) * Math.PI / 180,
+      life: 0,
+    });
+  }
+  spawnShoot();
+  setInterval(spawnShoot, rand(2800, 5000));
+
+  // ── Ripple on any user interaction ──
+  function triggerRipple() {
+    ripples.push({
+      x: rand(0.2, 0.8), y: rand(0.1, 0.7),
+      r: 0, maxR: rand(0.08, 0.18),
+      alpha: 0.5, speed: 0.0015,
+    });
+    // Also burst a few stars
+    for (let i = 0; i < 6; i++) {
+      const s = stars[Math.floor(Math.random() * stars.length)];
+      s.alpha = 1;
+      s.r = rand(2, 3.5);
+    }
+  }
+
+  // Listen for slider/button interactions in the parent document
+  document.addEventListener('mousedown', triggerRipple);
+  document.addEventListener('touchstart', triggerRipple);
+  // Also poll for Streamlit slider changes
+  let lastInputVal = '';
+  setInterval(() => {
+    const inputs = window.parent.document.querySelectorAll('input[type="range"]');
+    const vals = Array.from(inputs).map(i => i.value).join(',');
+    if (vals !== lastInputVal) { lastInputVal = vals; triggerRipple(); }
+  }, 80);
+
+  // ── Draw loop ──
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.012;
+
+    // Stars
+    for (const s of stars) {
+      const twinkle = s.alpha * (0.55 + 0.45 * Math.sin(t * s.speed * 400 + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.color;
+      ctx.globalAlpha = Math.max(0, Math.min(1, twinkle));
+      ctx.fill();
+
+      // Soft glow for bigger stars
+      if (s.r > 1.2) {
+        const g = ctx.createRadialGradient(s.x*W, s.y*H, 0, s.x*W, s.y*H, s.r*4);
+        g.addColorStop(0, 'rgba(196,181,253,0.25)');
+        g.addColorStop(1, 'rgba(196,181,253,0)');
+        ctx.beginPath();
+        ctx.arc(s.x*W, s.y*H, s.r*4, 0, Math.PI*2);
+        ctx.fillStyle = g;
+        ctx.globalAlpha = twinkle * 0.6;
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Shooting stars
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const ss = shootingStars[i];
+      ss.x += Math.cos(ss.angle) * ss.speed;
+      ss.y += Math.sin(ss.angle) * ss.speed;
+      ss.life += ss.speed;
+      ss.alpha = Math.max(0, 1 - ss.life / ss.len);
+
+      const x1 = ss.x * W, y1 = ss.y * H;
+      const x0 = x1 - Math.cos(ss.angle) * ss.len * W * 0.6;
+      const y0 = y1 - Math.sin(ss.angle) * ss.len * H * 0.6;
+      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+      grad.addColorStop(0, 'rgba(255,255,255,0)');
+      grad.addColorStop(1, `rgba(220,200,255,${ss.alpha})`);
+      ctx.beginPath();
+      ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = ss.alpha;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      if (ss.life > ss.len) shootingStars.splice(i, 1);
+    }
+
+    // Ripples
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i];
+      rp.r += rp.speed;
+      rp.alpha -= 0.008;
+      if (rp.alpha <= 0 || rp.r >= rp.maxR) { ripples.splice(i, 1); continue; }
+      ctx.beginPath();
+      ctx.arc(rp.x * W, rp.y * H, rp.r * Math.min(W, H), 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(192,132,252,${rp.alpha})`;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = rp.alpha;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+""", height=0)
 
 # ─── Header ──────────────────────────────────────────────────────────────────
 st.markdown("""
