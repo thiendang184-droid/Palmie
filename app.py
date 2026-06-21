@@ -415,7 +415,14 @@ st.markdown("""
 
     footer { visibility: hidden; }
     #MainMenu { visibility: hidden; }
+
+    /* Ẩn header nhưng giữ nút toggle sidebar */
     header { visibility: hidden; }
+    header [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
