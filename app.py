@@ -17,10 +17,14 @@ st.set_page_config(
 # ─── CSS ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
 
     /* ── Reset & Base ── */
     * { box-sizing: border-box; }
+
+    body, .stApp, [class*="st-"], p, span, div, label, input, button, select, textarea {
+        font-family: 'Be Vietnam Pro', sans-serif !important;
+    }
 
     .stApp {
         background: #07071a;
@@ -86,12 +90,12 @@ st.markdown("""
         filter: drop-shadow(0 0 30px rgba(192, 132, 252, 0.35));
     }
     .main-title-sub {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         text-align: center;
         color: #9ca3af;
         font-size: 1rem;
         font-weight: 300;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.02em;
         margin: 0.6rem 0 0;
     }
 
@@ -125,11 +129,11 @@ st.markdown("""
         margin: 0 0 4px;
     }
     .section-sub {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #6b7280;
         font-size: 0.82rem;
         margin: 0 0 16px;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.01em;
     }
 
     /* ── Sidebar ── */
@@ -168,14 +172,15 @@ st.markdown("""
         box-shadow: 0 4px 32px rgba(120,40,200,0.2);
     }
     .reading-card h4 {
-        font-family: 'Cinzel', serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #e0d0ff;
         margin: 0 0 10px 0;
         font-size: 1rem;
-        letter-spacing: 0.04em;
+        font-weight: 700;
+        letter-spacing: 0.01em;
     }
     .reading-card p {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #d1c7e8;
         margin: 0;
         line-height: 1.75;
@@ -191,14 +196,15 @@ st.markdown("""
         opacity: 0.55;
     }
     .reading-card-faded h4 {
-        font-family: 'Cinzel', serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #6b7280;
         margin: 0 0 10px 0;
         font-size: 1rem;
-        letter-spacing: 0.04em;
+        font-weight: 700;
+        letter-spacing: 0.01em;
     }
     .reading-card-faded p {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #4b5563;
         margin: 0;
         line-height: 1.75;
@@ -226,15 +232,15 @@ st.markdown("""
         padding: 2px 3px;
     }
     .hand-note {
-        font-family: 'Cinzel', serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #e9d5ff;
         font-size: 1.05rem;
-        font-weight: 600;
-        letter-spacing: 0.03em;
+        font-weight: 700;
+        letter-spacing: 0.01em;
         margin: 0;
     }
     .hand-detail {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', sans-serif;
         color: #7c6c99;
         font-size: 0.85rem;
         margin: 8px 0 20px 0;
@@ -243,14 +249,14 @@ st.markdown("""
     }
 
     /* ── Badges ── */
-    .badge-high   { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif; }
-    .badge-medium { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif; }
-    .badge-low    { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);  padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif; }
-    .badge-none   { background: rgba(75,85,99,0.2);    color: #6b7280;  border: 1px solid rgba(75,85,99,0.3);   padding: 2px 12px; border-radius: 20px; font-size: 11px; font-family: 'Inter', sans-serif; }
+    .badge-high   { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
+    .badge-medium { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
+    .badge-low    { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);  padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
+    .badge-none   { background: rgba(75,85,99,0.2);    color: #6b7280;  border: 1px solid rgba(75,85,99,0.3);   padding: 2px 12px; border-radius: 20px; font-size: 11px; font-family: 'Be Vietnam Pro', sans-serif; }
 
     /* ── Tags ── */
-    .tag       { display: inline-block; background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Inter', sans-serif; }
-    .tag-faded { display: inline-block; background: rgba(255,255,255,0.04); color: #4b5563; border: 1px solid rgba(255,255,255,0.06); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Inter', sans-serif; }
+    .tag       { display: inline-block; background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Be Vietnam Pro', sans-serif; }
+    .tag-faded { display: inline-block; background: rgba(255,255,255,0.04); color: #4b5563; border: 1px solid rgba(255,255,255,0.06); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Be Vietnam Pro', sans-serif; }
 
     /* ── Image Frames ── */
     .image-frame-label {
@@ -280,19 +286,20 @@ st.markdown("""
         backdrop-filter: blur(10px);
     }
     [data-testid="stMetricLabel"] {
-        font-family: 'Cinzel', serif !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
         font-size: 0.78rem !important;
-        letter-spacing: 0.06em !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.03em !important;
         color: #a78bfa !important;
     }
     [data-testid="stMetricValue"] {
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
         font-size: 1.4rem !important;
         font-weight: 600 !important;
         color: #e0d0ff !important;
     }
     [data-testid="stMetricDelta"] {
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
         font-size: 0.8rem !important;
     }
 
@@ -305,9 +312,10 @@ st.markdown("""
         gap: 4px !important;
     }
     [data-testid="stTabs"] [data-baseweb="tab"] {
-        font-family: 'Cinzel', serif !important;
-        font-size: 0.85rem !important;
-        letter-spacing: 0.06em !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
         color: #7c6c99 !important;
         border-radius: 10px !important;
         padding: 10px 22px !important;
@@ -327,7 +335,7 @@ st.markdown("""
         border: 1px solid rgba(192,132,252,0.35) !important;
         border-radius: 12px !important;
         color: #d4aaff !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 500 !important;
         letter-spacing: 0.04em !important;
@@ -359,7 +367,7 @@ st.markdown("""
         background: rgba(30,10,80,0.4) !important;
         border: 1px solid rgba(139,92,246,0.25) !important;
         border-radius: 12px !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Be Vietnam Pro', sans-serif !important;
         color: #c4b5fd !important;
     }
 
@@ -374,6 +382,15 @@ st.markdown("""
         font-size: 12px;
         color: #fcd34d;
         line-height: 1.8;
+    }
+
+    /* ── Confidence pct ── */
+    .conf-pct {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 400;
+        margin-left: 6px;
     }
 
     /* ── Divider ── */
@@ -400,15 +417,6 @@ st.markdown("""
     ::-webkit-scrollbar-track { background: #07071a; }
     ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(192,132,252,0.6); }
-
-    /* ── Confidence badge inline ── */
-    .conf-pct {
-        font-family: 'Inter', sans-serif;
-        color: #6b7280;
-        font-size: 11px;
-        font-weight: 400;
-        margin-left: 6px;
-    }
 
     /* ── Pulse animation for gem ── */
     @keyframes pulse-glow {
