@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1
 from PIL import Image
 import time
 import os
@@ -18,610 +17,82 @@ st.set_page_config(
 # ─── CSS ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
-
-    /* ── Reset & Base ── */
-    * { box-sizing: border-box; }
-
-    body, .stApp, [class*="st-"], p, span, div, label, input, button, select, textarea {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-    }
-
-    .stApp {
-        background: #07071a;
-        background-image:
-            radial-gradient(ellipse 80% 50% at 20% 10%, rgba(120, 40, 200, 0.18) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 40% at 80% 90%, rgba(30, 10, 100, 0.25) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 60% at 50% 50%, rgba(180, 80, 255, 0.06) 0%, transparent 70%);
-        min-height: 100vh;
-    }
-
-
-    /* ── Main Title ── */
-    .main-title-wrap {
-        text-align: center;
-        padding: 2.5rem 0 0.5rem;
-        position: relative;
-    }
-    .main-title-eyebrow {
-        font-family: 'Cinzel', serif;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.45em;
-        color: #a78bfa;
-        text-transform: uppercase;
-        margin-bottom: 0.6rem;
-        opacity: 0.8;
-    }
+    .stApp { background: linear-gradient(135deg, #0d0d2b 0%, #1a0533 100%); }
     .main-title {
-        font-family: 'Cinzel', serif;
-        font-size: clamp(2.2rem, 5vw, 3.6rem);
-        font-weight: 900;
-        letter-spacing: 0.04em;
-        line-height: 1.1;
-        background: linear-gradient(135deg, #e0c3fc 0%, #c084fc 30%, #f0abfc 55%, #818cf8 80%, #c4b5fd 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin: 0;
-        filter: drop-shadow(0 0 30px rgba(192, 132, 252, 0.35));
+        text-align: center; font-size: 3rem; font-weight: 800;
+        background: linear-gradient(90deg, #c084fc, #f0abfc, #818cf8);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        margin-bottom: 0;
     }
-    .main-title-sub {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        text-align: center;
-        color: #9ca3af;
-        font-size: 1rem;
-        font-weight: 300;
-        letter-spacing: 0.02em;
-        margin: 0.6rem 0 0;
-    }
-
-    /* ── Orb Divider ── */
-    .orb-divider {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        margin: 1.5rem 0;
-    }
-    .orb-divider-line {
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(192,132,252,0.4), transparent);
-    }
-    .orb-divider-gem {
-        width: 10px; height: 10px;
-        background: radial-gradient(circle at 35% 35%, #f0abfc, #7c3aed);
-        border-radius: 50%;
-        box-shadow: 0 0 12px rgba(192,132,252,0.8), 0 0 24px rgba(192,132,252,0.3);
-    }
-
-    /* ── Section Header ── */
-    .section-header {
-        font-family: 'Cinzel', serif;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #d4aaff;
-        letter-spacing: 0.08em;
-        margin: 0 0 4px;
-    }
-    .section-sub {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #6b7280;
-        font-size: 0.82rem;
-        margin: 0 0 16px;
-        letter-spacing: 0.01em;
-    }
-
-    /* ── Sidebar ── */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f0f28 0%, #130a2a 100%) !important;
-        border-right: 1px solid rgba(120,80,200,0.2) !important;
-    }
-    [data-testid="stSidebar"] .stMarkdown h2,
-    [data-testid="stSidebar"] .stMarkdown h3,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-    }
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] .stMarkdown h2,
-    [data-testid="stSidebar"] .stMarkdown h3 {
-        color: #c084fc !important;
-    }
-
-    /* ── Cards ── */
-    .reading-card {
-        background: linear-gradient(135deg, rgba(120,40,200,0.12) 0%, rgba(40,10,80,0.25) 100%);
-        border: 1px solid rgba(192,132,252,0.25);
-        border-radius: 16px;
-        padding: 20px 24px;
-        margin: 12px 0;
-        backdrop-filter: blur(16px);
-        position: relative;
-        overflow: hidden;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .reading-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(192,132,252,0.6), transparent);
-    }
-    .reading-card:hover {
-        border-color: rgba(192,132,252,0.5);
-        box-shadow: 0 4px 32px rgba(120,40,200,0.2);
-    }
-    .reading-card h4 {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #e0d0ff;
-        margin: 0 0 10px 0;
-        font-size: 1rem;
-        font-weight: 700;
-        letter-spacing: 0.01em;
-    }
-    .reading-card p {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #d1c7e8;
-        margin: 0;
-        line-height: 1.75;
-        font-size: 0.93rem;
-    }
-
-    .reading-card-faded {
-        background: rgba(255,255,255,0.02);
-        border: 1px dashed rgba(120,80,200,0.2);
-        border-radius: 16px;
-        padding: 20px 24px;
-        margin: 12px 0;
-        opacity: 0.55;
-    }
-    .reading-card-faded h4 {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #6b7280;
-        margin: 0 0 10px 0;
-        font-size: 1rem;
-        font-weight: 700;
-        letter-spacing: 0.01em;
-    }
-    .reading-card-faded p {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #4b5563;
-        margin: 0;
-        line-height: 1.75;
-        font-size: 0.93rem;
-    }
-
-    /* ── Hand Note ── */
-    .hand-note-wrap {
-        background: linear-gradient(120deg, rgba(139,92,246,0.15) 0%, rgba(30,10,80,0.3) 100%);
-        border-left: 3px solid #9333ea;
-        border-radius: 0 12px 12px 0;
-        padding: 14px 20px;
-        margin: 20px 0 4px;
-        position: relative;
-    }
-    .hand-note-wrap::before {
-        content: '✦';
-        position: absolute;
-        left: -10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9333ea;
-        font-size: 14px;
-        background: #07071a;
-        padding: 2px 3px;
-    }
+    .sub-title { text-align: center; color: #a78bfa; font-size: 1.1rem; margin-top: 4px; }
     .hand-note {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #e9d5ff;
-        font-size: 1.05rem;
-        font-weight: 700;
-        letter-spacing: 0.01em;
-        margin: 0;
+        background: linear-gradient(90deg, rgba(192,132,252,0.2), rgba(129,140,248,0.2));
+        border-left: 4px solid #c084fc; border-radius: 8px;
+        padding: 12px 18px; color: #f0abfc; font-size: 1.1rem;
+        font-weight: 600; margin: 16px 0 6px 0;
     }
-    .hand-detail {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #7c6c99;
-        font-size: 0.85rem;
-        margin: 8px 0 20px 0;
-        padding-left: 4px;
-        font-style: italic;
+    .hand-detail { color: #9ca3af; font-size: 0.9rem; margin: 0 0 16px 0; padding-left: 4px; font-style: italic; }
+    .reading-card {
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(180,120,255,0.3);
+        border-radius: 12px; padding: 16px 20px; margin: 10px 0; backdrop-filter: blur(10px);
     }
-
-    /* ── Badges ── */
-    .badge-high   { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
-    .badge-medium { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
-    .badge-low    { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);  padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; }
-    .badge-none   { background: rgba(75,85,99,0.2);    color: #6b7280;  border: 1px solid rgba(75,85,99,0.3);   padding: 2px 12px; border-radius: 20px; font-size: 11px; font-family: 'Be Vietnam Pro', sans-serif; }
-
-    /* ── Tags ── */
-    .tag       { display: inline-block; background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Be Vietnam Pro', sans-serif; }
-    .tag-faded { display: inline-block; background: rgba(255,255,255,0.04); color: #4b5563; border: 1px solid rgba(255,255,255,0.06); padding: 2px 12px; border-radius: 20px; font-size: 11px; margin: 2px 3px 8px 0; font-family: 'Be Vietnam Pro', sans-serif; }
-
-    /* ── Image Frames ── */
-    .image-frame-label {
-        font-family: 'Cinzel', serif;
-        font-size: 0.78rem;
-        letter-spacing: 0.18em;
-        color: #7c6c99;
-        text-transform: uppercase;
-        margin-bottom: 8px;
+    .reading-card h4 { color: #d4aaff; margin: 0 0 8px 0; font-size: 1.05rem; }
+    .reading-card p  { color: #e8e0f0; margin: 0; line-height: 1.7; font-size: 0.95rem; }
+    .reading-card-faded {
+        background: rgba(255,255,255,0.02); border: 1px dashed rgba(180,120,255,0.2);
+        border-radius: 12px; padding: 16px 20px; margin: 10px 0; opacity: 0.65;
     }
-    [data-testid="stImage"] img {
-        border-radius: 16px !important;
-        border: 1px solid rgba(139,92,246,0.25) !important;
-        box-shadow: 0 8px 40px rgba(80,20,160,0.3), 0 0 0 1px rgba(192,132,252,0.1) !important;
-        transition: box-shadow 0.3s ease !important;
-    }
-    [data-testid="stImage"] img:hover {
-        box-shadow: 0 12px 50px rgba(120,40,200,0.45), 0 0 0 1px rgba(192,132,252,0.25) !important;
-    }
-
-    /* ── Metric cards ── */
-    [data-testid="stMetric"] {
-        background: linear-gradient(135deg, rgba(120,40,200,0.1) 0%, rgba(30,10,80,0.2) 100%);
-        border: 1px solid rgba(139,92,246,0.2);
-        border-radius: 14px;
-        padding: 16px 18px !important;
-        backdrop-filter: blur(10px);
-    }
-    [data-testid="stMetricLabel"] {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        font-size: 0.78rem !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.03em !important;
-        color: #a78bfa !important;
-    }
-    [data-testid="stMetricValue"] {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        font-size: 1.4rem !important;
-        font-weight: 600 !important;
-        color: #e0d0ff !important;
-    }
-    [data-testid="stMetricDelta"] {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        font-size: 0.8rem !important;
-    }
-
-    /* ── Tabs ── */
-    [data-testid="stTabs"] [data-baseweb="tab-list"] {
-        background: rgba(30,10,60,0.5) !important;
-        border-radius: 14px !important;
-        padding: 4px !important;
-        border: 1px solid rgba(139,92,246,0.2) !important;
-        gap: 4px !important;
-    }
-    [data-testid="stTabs"] [data-baseweb="tab"] {
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        font-size: 0.88rem !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-        color: #7c6c99 !important;
-        border-radius: 10px !important;
-        padding: 10px 22px !important;
-        border: none !important;
-        background: transparent !important;
-        transition: all 0.2s ease !important;
-    }
-    [data-testid="stTabs"] [aria-selected="true"] {
-        background: linear-gradient(135deg, rgba(120,40,200,0.4), rgba(80,20,140,0.5)) !important;
-        color: #e0d0ff !important;
-        box-shadow: 0 2px 12px rgba(120,40,200,0.3) !important;
-    }
-
-    /* ── Buttons ── */
-    .stDownloadButton > button {
-        background: linear-gradient(135deg, rgba(120,40,200,0.3) 0%, rgba(60,20,120,0.4) 100%) !important;
-        border: 1px solid rgba(192,132,252,0.35) !important;
-        border-radius: 12px !important;
-        color: #d4aaff !important;
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        font-size: 0.88rem !important;
-        font-weight: 500 !important;
-        letter-spacing: 0.04em !important;
-        padding: 12px 24px !important;
-        transition: all 0.25s ease !important;
-        width: 100% !important;
-    }
-    .stDownloadButton > button:hover {
-        background: linear-gradient(135deg, rgba(150,60,230,0.45) 0%, rgba(90,30,160,0.5) 100%) !important;
-        border-color: rgba(192,132,252,0.6) !important;
-        box-shadow: 0 4px 20px rgba(120,40,200,0.35) !important;
-        transform: translateY(-1px) !important;
-    }
-
-    /* ── File uploader ── */
-    [data-testid="stFileUploader"] {
-        background: linear-gradient(135deg, rgba(60,20,120,0.15) 0%, rgba(20,5,50,0.25) 100%) !important;
-        border: 2px dashed rgba(139,92,246,0.3) !important;
-        border-radius: 16px !important;
-        padding: 8px !important;
-        transition: border-color 0.3s ease !important;
-    }
-    [data-testid="stFileUploader"]:hover {
-        border-color: rgba(192,132,252,0.5) !important;
-    }
-
-    /* ── Info & warning boxes ── */
-    [data-testid="stAlert"] {
-        background: rgba(30,10,80,0.4) !important;
-        border: 1px solid rgba(139,92,246,0.25) !important;
-        border-radius: 12px !important;
-        font-family: 'Be Vietnam Pro', sans-serif !important;
-        color: #c4b5fd !important;
-    }
-
-    /* ── Debug box ── */
-    .debug-box {
-        background: rgba(245,158,11,0.08);
-        border: 1px solid rgba(245,158,11,0.25);
-        border-radius: 12px;
-        padding: 14px 18px;
-        margin: 12px 0;
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        color: #fcd34d;
-        line-height: 1.8;
-    }
-
-    /* ── Confidence pct ── */
-    .conf-pct {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        color: #6b7280;
-        font-size: 11px;
-        font-weight: 400;
-        margin-left: 6px;
-    }
-
-    /* ── Divider ── */
-    hr {
-        border: none !important;
-        border-top: 1px solid rgba(139,92,246,0.15) !important;
-        margin: 1.5rem 0 !important;
-    }
-
-    /* ── Spinner ── */
-    .stSpinner > div {
-        border-color: rgba(192,132,252,0.2) !important;
-        border-top-color: #c084fc !important;
-    }
-
-    /* ── Slider ── */
-    [data-testid="stSlider"] [data-baseweb="slider"] div[role="slider"] {
-        background: #9333ea !important;
-        box-shadow: 0 0 8px rgba(147,51,234,0.6) !important;
-    }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #07071a; }
-    ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(192,132,252,0.6); }
-
-    /* ── Pulse animation for gem ── */
-    @keyframes pulse-glow {
-        0%  { box-shadow: 0 0 8px rgba(192,132,252,0.6), 0 0 16px rgba(192,132,252,0.2); }
-        50% { box-shadow: 0 0 16px rgba(192,132,252,0.9), 0 0 32px rgba(192,132,252,0.4); }
-        100%{ box-shadow: 0 0 8px rgba(192,132,252,0.6), 0 0 16px rgba(192,132,252,0.2); }
-    }
-    .orb-divider-gem { animation: pulse-glow 3s ease-in-out infinite; }
-
+    .reading-card-faded h4 { color: #9ca3af; margin: 0 0 8px 0; font-size: 1.05rem; }
+    .reading-card-faded p  { color: #9ca3af; margin: 0; line-height: 1.7; font-size: 0.95rem; }
+    .badge-high   { background:#1a4a2a; color:#5dff8f; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .badge-medium { background:#3a3a10; color:#ffd700; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .badge-low    { background:#3a1020; color:#ff8fa0; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .badge-none   { background:#2a2a2a; color:#888888; padding:2px 10px; border-radius:20px; font-size:11px; }
+    .tag       { display:inline-block; background:rgba(192,132,252,0.15); color:#d4aaff; padding:2px 10px; border-radius:20px; font-size:11px; margin:2px 2px 6px 0; }
+    .tag-faded { display:inline-block; background:rgba(255,255,255,0.05); color:#666; padding:2px 10px; border-radius:20px; font-size:11px; margin:2px 2px 6px 0; }
+    .debug-box { background:rgba(255,200,0,0.1); border:1px solid rgba(255,200,0,0.3); border-radius:8px; padding:12px; margin:10px 0; font-family:monospace; font-size:12px; color:#ffd700; }
     footer { visibility: hidden; }
-    #MainMenu { visibility: hidden; }
-
-    /* Ẩn header nhưng giữ nút toggle sidebar */
-    header { visibility: hidden; }
-    header [data-testid="stSidebarCollapsedControl"],
-    [data-testid="collapsedControl"] {
-        visibility: visible !important;
-        pointer-events: auto !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-
-# ─── Animated Starfield ──────────────────────────────────────────────────────
-st.components.v1.html("""
-<canvas id="starCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;"></canvas>
-<script>
-(function() {
-  const canvas = document.getElementById('starCanvas');
-  const ctx = canvas.getContext('2d');
-
-  let W, H, stars = [], shootingStars = [], ripples = [];
-  const N_STARS = 180;
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function rand(a, b) { return a + Math.random() * (b - a); }
-
-  // ── Init stars ──
-  for (let i = 0; i < N_STARS; i++) {
-    stars.push({
-      x: rand(0, 1), y: rand(0, 1),
-      r: rand(0.4, 1.8),
-      alpha: rand(0.2, 0.9),
-      speed: rand(0.0003, 0.0012),
-      phase: rand(0, Math.PI * 2),
-      color: Math.random() > 0.85 ? '#c4b5fd' : '#ffffff',
-    });
-  }
-
-  // ── Shooting star ──
-  function spawnShoot() {
-    shootingStars.push({
-      x: rand(0.1, 0.9), y: rand(0, 0.4),
-      len: rand(0.06, 0.14),
-      speed: rand(0.004, 0.009),
-      alpha: 1,
-      angle: rand(25, 45) * Math.PI / 180,
-      life: 0,
-    });
-  }
-  spawnShoot();
-  setInterval(spawnShoot, rand(2800, 5000));
-
-  // ── Ripple on any user interaction ──
-  function triggerRipple() {
-    ripples.push({
-      x: rand(0.2, 0.8), y: rand(0.1, 0.7),
-      r: 0, maxR: rand(0.08, 0.18),
-      alpha: 0.5, speed: 0.0015,
-    });
-    // Also burst a few stars
-    for (let i = 0; i < 6; i++) {
-      const s = stars[Math.floor(Math.random() * stars.length)];
-      s.alpha = 1;
-      s.r = rand(2, 3.5);
-    }
-  }
-
-  // Listen for slider/button interactions in the parent document
-  document.addEventListener('mousedown', triggerRipple);
-  document.addEventListener('touchstart', triggerRipple);
-  // Also poll for Streamlit slider changes
-  let lastInputVal = '';
-  setInterval(() => {
-    const inputs = window.parent.document.querySelectorAll('input[type="range"]');
-    const vals = Array.from(inputs).map(i => i.value).join(',');
-    if (vals !== lastInputVal) { lastInputVal = vals; triggerRipple(); }
-  }, 80);
-
-  // ── Draw loop ──
-  let t = 0;
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    t += 0.012;
-
-    // Stars
-    for (const s of stars) {
-      const twinkle = s.alpha * (0.55 + 0.45 * Math.sin(t * s.speed * 400 + s.phase));
-      ctx.beginPath();
-      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = s.color;
-      ctx.globalAlpha = Math.max(0, Math.min(1, twinkle));
-      ctx.fill();
-
-      // Soft glow for bigger stars
-      if (s.r > 1.2) {
-        const g = ctx.createRadialGradient(s.x*W, s.y*H, 0, s.x*W, s.y*H, s.r*4);
-        g.addColorStop(0, 'rgba(196,181,253,0.25)');
-        g.addColorStop(1, 'rgba(196,181,253,0)');
-        ctx.beginPath();
-        ctx.arc(s.x*W, s.y*H, s.r*4, 0, Math.PI*2);
-        ctx.fillStyle = g;
-        ctx.globalAlpha = twinkle * 0.6;
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-
-    // Shooting stars
-    for (let i = shootingStars.length - 1; i >= 0; i--) {
-      const ss = shootingStars[i];
-      ss.x += Math.cos(ss.angle) * ss.speed;
-      ss.y += Math.sin(ss.angle) * ss.speed;
-      ss.life += ss.speed;
-      ss.alpha = Math.max(0, 1 - ss.life / ss.len);
-
-      const x1 = ss.x * W, y1 = ss.y * H;
-      const x0 = x1 - Math.cos(ss.angle) * ss.len * W * 0.6;
-      const y0 = y1 - Math.sin(ss.angle) * ss.len * H * 0.6;
-      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
-      grad.addColorStop(0, 'rgba(255,255,255,0)');
-      grad.addColorStop(1, `rgba(220,200,255,${ss.alpha})`);
-      ctx.beginPath();
-      ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.5;
-      ctx.globalAlpha = ss.alpha;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      if (ss.life > ss.len) shootingStars.splice(i, 1);
-    }
-
-    // Ripples
-    for (let i = ripples.length - 1; i >= 0; i--) {
-      const rp = ripples[i];
-      rp.r += rp.speed;
-      rp.alpha -= 0.008;
-      if (rp.alpha <= 0 || rp.r >= rp.maxR) { ripples.splice(i, 1); continue; }
-      ctx.beginPath();
-      ctx.arc(rp.x * W, rp.y * H, rp.r * Math.min(W, H), 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(192,132,252,${rp.alpha})`;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = rp.alpha;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    }
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-</script>
-""", height=0)
-
 # ─── Header ──────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="main-title-wrap">
-    <p class="main-title-eyebrow">✦ Palmistry · AI Oracle ✦</p>
-    <h1 class="main-title">Bói Chỉ Tay AI</h1>
-    <p class="main-title-sub">Khám phá bí ẩn đường chỉ tay qua trí tuệ nhân tạo</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div class="orb-divider">
-    <div class="orb-divider-line"></div>
-    <div class="orb-divider-gem"></div>
-    <div class="orb-divider-line"></div>
-</div>
-""", unsafe_allow_html=True)
-
+st.markdown('<h1 class="main-title">Bói Chỉ Tay AI</h1>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Khám phá bí ẩn đường chỉ tay bằng trí tuệ nhân tạo</p>', unsafe_allow_html=True)
+st.divider()
 
 # ─── Hàm Tải Model Tự Động ───────────────────────────────────────────────────
 @st.cache_resource
 def download_models():
+    # Tạo thư mục model nếu chưa có trên server
     os.makedirs('model', exist_ok=True)
-
+    
     model1_path = 'model/best_model.pth'
     model2_path = 'model/best_model2.pth'
     model3_path = 'model/best_model3.pth'
-
+    
     id_model1 = 'https://drive.google.com/file/d/1Zjcwts4QwJnd7myJLXsPB7LK28XUaEqA/view?usp=drive_link'
     id_model2 = 'https://drive.google.com/file/d/1ANdhjIM4O4QPlMy0WJrtw4j50BwP4Xb8/view?usp=drive_link'
     id_model3 = 'https://drive.google.com/file/d/1jbqF1hY_EyjwZHLF_M4tcVviahRCYdUT/view?usp=drive_link'
 
+    # Tải Model 1
     if not os.path.exists(model1_path):
-        with st.spinner("🔮 Đang khởi tạo Hệ thống AI (Model 1)..."):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 1)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
             gdown.download(f'https://drive.google.com/uc?id={id_model1}', model1_path, quiet=False)
 
+    # Tải Model 2
     if not os.path.exists(model2_path):
-        with st.spinner("🔮 Đang khởi tạo Hệ thống AI (Model 2)..."):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 2)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
             gdown.download(f'https://drive.google.com/uc?id={id_model2}', model2_path, quiet=False)
 
+    # Tải Model 3
     if not os.path.exists(model3_path):
-        with st.spinner("🔮 Đang khởi tạo Hệ thống AI (Model 3)..."):
+        with st.spinner("Đang khởi tạo Hệ thống AI (Model 3)... (chỉ mất vài chục giây cho lần đầu chạy app)"):
             gdown.download(f'https://drive.google.com/uc?id={id_model3}', model3_path, quiet=False)
 
     return True
 
+# Kích hoạt tải model ngay khi app load xong header
 _ = download_models()
-
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -637,10 +108,26 @@ with st.sidebar:
     st.markdown("### 🎯 Ngưỡng nhận diện")
     st.caption("Chỉnh riêng cho từng đường chỉ tay")
 
-    conf_life  = st.slider("💚 Sinh Đạo",   min_value=0.1, max_value=0.9, value=0.50, step=0.05)
-    conf_heart = st.slider("❤️ Tâm Đạo",    min_value=0.1, max_value=0.9, value=0.50, step=0.05)
-    conf_head  = st.slider("💙 Trí Đạo",    min_value=0.1, max_value=0.9, value=0.50, step=0.05)
-    conf_fate  = st.slider("⭐ Định Mệnh",  min_value=0.1, max_value=0.9, value=0.30, step=0.05)
+    conf_life = st.slider(
+        "💚 Sinh Đạo",
+        min_value=0.1, max_value=0.9,
+        value=0.50, step=0.05,
+    )
+    conf_heart = st.slider(
+        "❤️ Tâm Đạo",
+        min_value=0.1, max_value=0.9,
+        value=0.50, step=0.05,
+    )
+    conf_head = st.slider(
+        "💙 Trí Đạo",
+        min_value=0.1, max_value=0.9,
+        value=0.50, step=0.05,
+    )
+    conf_fate = st.slider(
+        "⭐ Định Mệnh",
+        min_value=0.1, max_value=0.9,
+        value=0.30, step=0.05,
+    )
 
     thresholds = {
         "life":  conf_life,
@@ -655,51 +142,38 @@ with st.sidebar:
     st.divider()
     st.markdown("### 📖 Hướng dẫn")
     st.info("""
-**Bước 1:** Chọn giới tính
-**Bước 2:** Upload ảnh hoặc dùng Camera
-**Bước 3:** Xem kết quả phân tích
+    **Bước 1:** Chọn giới tính
+    **Bước 2:** Upload ảnh hoặc dùng Camera
+    **Bước 3:** Xem kết quả phân tích
 
-**Lưu ý chụp ảnh tốt:**
-- 🖐️ Mở thẳng lòng bàn tay
-- 💡 Đủ ánh sáng, tránh bóng đổ
-- 📐 Bàn tay chiếm phần lớn khung hình
-- 🎯 Ảnh rõ nét, không bị mờ
+    **Lưu ý chụp ảnh tốt:**
+    - 🖐️ Mở thẳng lòng bàn tay
+    - 💡 Đủ ánh sáng, tránh bóng đổ
+    - 📐 Bàn tay chiếm phần lớn khung hình
+    - 🎯 Ảnh rõ nét, không bị mờ
     """)
 
     st.divider()
     st.markdown("### 🔮 4 Đường Chỉ Tay")
     st.markdown("""
-- 💚 **Sinh Đạo** — Sức khỏe & sinh khí
-- ❤️ **Tâm Đạo** — Tình cảm & cảm xúc
-- 💙 **Trí Đạo** — Trí tuệ & tư duy
-- ⭐ **Định Mệnh** — Sự nghiệp & con đường đời
+    - 💚 **Sinh Đạo** — Sức khỏe & sinh khí
+    - ❤️ **Tâm Đạo** — Tình cảm & cảm xúc
+    - 💙 **Trí Đạo** — Trí tuệ & tư duy
+    - ⭐ **Định Mệnh** — Sự nghiệp & con đường đời
     """)
 
 
 # ─── Hàm hiển thị kết quả ────────────────────────────────────────────────────
-def display_results(result: dict, btn_key: str):
+def display_results(result: dict):
     st.divider()
-
-    st.markdown(f"""
-    <div class="hand-note-wrap">
-        <p class="hand-note">{result["hand_note"]}</p>
-    </div>
-    <p class="hand-detail">{result["hand_detail"]}</p>
-    """, unsafe_allow_html=True)
+    st.markdown(f'<div class="hand-note">{result["hand_note"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<p class="hand-detail">{result["hand_detail"]}</p>', unsafe_allow_html=True)
 
     if result["total_lines"] == 0:
         st.warning("⚠️ Không phát hiện đường chỉ tay rõ ràng. Hãy thử chụp lại hoặc giảm ngưỡng nhận diện.")
         return
 
-    st.markdown(f"""
-    <div class="orb-divider" style="margin: 8px 0 4px;">
-        <div class="orb-divider-line"></div>
-        <span style="font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.2em;color:#7c6c99;white-space:nowrap;">
-            PHÂN TÍCH {result['total_lines']} ĐƯỜNG CHỈ TAY
-        </span>
-        <div class="orb-divider-line"></div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"### 🔮 Phân tích {result['total_lines']} đường chỉ tay")
 
     for r in result["readings"]:
         if r["found"]:
@@ -708,12 +182,11 @@ def display_results(result: dict, btn_key: str):
             tags_html   = "".join(f'<span class="tag">{t}</span>' for t in r["tags"])
             st.markdown(f"""
             <div class="reading-card">
-                <h4>
-                    {r['emoji']} {r['line']}
+                <h4>{r['emoji']} {r['line']}
                     &nbsp;<span class="{badge_class}">{badge_text}</span>
-                    <span class="conf-pct">({r['confidence']:.0%})</span>
+                    &nbsp;<span style="color:#6b7280;font-size:12px;font-weight:400;">({r['confidence']:.0%})</span>
                 </h4>
-                <div style="margin-bottom:12px;">{tags_html}</div>
+                <div style="margin-bottom:10px;">{tags_html}</div>
                 <p>{r['meaning']}</p>
             </div>
             """, unsafe_allow_html=True)
@@ -721,11 +194,10 @@ def display_results(result: dict, btn_key: str):
             tags_html = "".join(f'<span class="tag-faded">{t}</span>' for t in r["tags"])
             st.markdown(f"""
             <div class="reading-card-faded">
-                <h4>
-                    {r['emoji']} {r['line']}
+                <h4>{r['emoji']} {r['line']}
                     &nbsp;<span class="badge-none">Không tìm thấy</span>
                 </h4>
-                <div style="margin-bottom:12px;">{tags_html}</div>
+                <div style="margin-bottom:10px;">{tags_html}</div>
                 <p>{r['meaning']}</p>
             </div>
             """, unsafe_allow_html=True)
@@ -740,29 +212,28 @@ def display_results(result: dict, btn_key: str):
         summary += f"{r['emoji']} {r['line']} {status}\nTags: {tags_str}\n{r['meaning']}\n\n" + "-"*40 + "\n\n"
 
     st.download_button(
-        label="💾 Lưu kết quả (.txt)",
-        data=summary,
-        file_name="ket_qua_boi_tay.txt",
-        mime="text/plain",
+        label="💾 Tải kết quả (.txt)", data=summary,
+        file_name="ket_qua_boi_tay.txt", mime="text/plain",
         use_container_width=True,
-        key=btn_key,
     )
 
 
 # ─── Hàm xử lý ảnh ───────────────────────────────────────────────────────────
-def process_image(image: Image.Image, src_key: str):
-    col1, col2 = st.columns(2, gap="large")
+def process_image(image: Image.Image):
+    col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown('<p class="image-frame-label">✦ Ảnh gốc</p>', unsafe_allow_html=True)
+        st.markdown("**🖼️ Ảnh gốc**")
         st.image(image, use_container_width=True)
 
-    with st.spinner("🔮 Đang giải mã đường chỉ tay của bạn..."):
-        annotated_img, detections, img_w, img_h, debug_info = run_inference(image, thresholds)
+    with st.spinner("🔮 Đang phân tích đường chỉ tay..."):
+        annotated_img, detections, img_w, img_h, debug_info = run_inference(
+            image, thresholds
+        )
         result = interpret_results(detections, gender, img_w, img_h)
 
     with col2:
-        st.markdown('<p class="image-frame-label">✦ Nhận diện AI</p>', unsafe_allow_html=True)
+        st.markdown("**🎯 Kết quả nhận diện**")
         st.image(annotated_img, use_container_width=True)
 
     # ── Debug mode ────────────────────────────────────────────
@@ -791,17 +262,8 @@ def process_image(image: Image.Image, src_key: str):
             st.warning("Không có detection nào — thử giảm ngưỡng xuống 0.1")
 
     # ── Metrics 4 đường ──────────────────────────────────────
-    st.markdown("""
-    <div class="orb-divider" style="margin: 20px 0 12px;">
-        <div class="orb-divider-line"></div>
-        <span style="font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:0.2em;color:#7c6c99;white-space:nowrap;">
-            TÓM TẮT NHẬN DIỆN
-        </span>
-        <div class="orb-divider-line"></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    cols      = st.columns(4, gap="small")
+    st.divider()
+    cols      = st.columns(4)
     line_info = [
         ("💚", "Sinh Đạo",   "life"),
         ("❤️", "Tâm Đạo",   "heart"),
@@ -817,27 +279,25 @@ def process_image(image: Image.Image, src_key: str):
             else:
                 st.metric(f"{emoji} {name}", "—", "❌ Không thấy")
 
-    display_results(result, btn_key=f"download_{src_key}")
+    display_results(result)
 
 
 # ─── Tabs chính ──────────────────────────────────────────────────────────────
-tab1, tab2 = st.tabs(["  📁  Upload Ảnh  ", "  📷  Camera  "])
+tab1, tab2 = st.tabs(["📁 Upload Ảnh", "📷 Camera Realtime"])
 
 with tab1:
-    st.markdown('<p class="section-sub">Tải lên ảnh lòng bàn tay rõ nét — JPG, PNG hoặc WEBP</p>', unsafe_allow_html=True)
     uploaded = st.file_uploader(
-        "Chọn ảnh bàn tay",
+        "Chọn ảnh bàn tay (JPG, PNG, WEBP)",
         type=["jpg", "jpeg", "png", "webp"],
         help="Ảnh rõ nét, lòng bàn tay mở thẳng, đủ ánh sáng",
-        label_visibility="collapsed",
     )
     if uploaded:
         image = Image.open(uploaded).convert("RGB")
-        process_image(image, src_key="upload")
+        process_image(image)
 
 with tab2:
-    st.info("📸 Hướng camera vào lòng bàn tay · Giữ tay thẳng · Đảm bảo đủ ánh sáng")
-    camera_img = st.camera_input("Chụp ảnh bàn tay", label_visibility="collapsed")
+    st.info("📸 Hướng camera vào lòng bàn tay, giữ tay thẳng và đủ ánh sáng")
+    camera_img = st.camera_input("Chụp ảnh bàn tay")
     if camera_img:
         image = Image.open(camera_img).convert("RGB")
-        process_image(image, src_key="camera")
+        process_image(image)
